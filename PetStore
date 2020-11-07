@@ -1,0 +1,110 @@
+pragma solidity ^0.4.25;
+
+/**
+ * @title Pet Store
+ *Pet Store Contract created by Chen Xin.
+ */
+
+ contract PetStoreMarket {
+    // admin (管理员：帐户开户、初始化、监测市场里的宠物价格分布、售卖次数、处理纠纷)
+    address public admin;
+    // seller(出售人：将宠物上架、制定价格、售卖成功则收款)
+    address public seller;
+    // buyer (购买人：选择宠物、进行购买)
+    address public buyer;
+    
+    struct pet {
+        //uint Id;//ID 
+        address id;
+        string petname;//名称
+        string class;//品类
+        uint birth;//出生日期
+        //uint value;//价格
+        uint256 value;
+        string description;//描述
+        bool status;
+        address owner;
+    }
+    
+    //pet[88] pets;//假设宠物数量为88
+    pet[] private pets;
+    
+    mapping (address => uint256) public balances;
+    
+    event getBalance(address user, uint256 balance);
+    function setSeller(address _seller, uint256 _balance) public {
+        require(msg.sender == admin && _seller != 0x0 && _balance >=0);
+        seller = _seller;
+        balances[seller] = _balance;
+        emit getBalance(seller, balances[seller]);
+    }
+    
+    function setBuyer(address _buyer, uint256 _balance) public {
+        require(msg.sender == admin && _buyer != 0x0 && _balance >=0);
+        buyer = _buyer;
+        balances[buyer] = _balance;
+        emit getBalance(buyer, balances[buyer]);
+    }
+    
+    function setAdmin(address _admin) public {
+        require(_admin != 0x0);
+        admin = _admin;
+    }
+    
+    event petInfo(address _petid, string _petname, string _class, uint _birth, uint _value, string _description, bool status, address _owner);
+    function setPet(address _petid, string _petname, string _class, uint _birth, uint256 _value, bool _status, string _description) public {
+        require(msg.sender == seller && _petid != 0x0);
+        pet memory p = pet({
+            id: _petid,
+            petname: _petname,
+            class: _class,
+            birth: _birth,
+            value: _value,
+            description: _description,
+            status: _status,
+            owner: seller
+        });
+        pets.push(p);
+        emit petInfo(p.id, p.petname, p.class, p.birth, p.value, p.description, p.status, p.owner);
+    }
+    
+    function getPet(address petid) view public returns(
+        address _petid, string _petname, string _class, uint _birth, uint _value, string _description, address _owner
+    ) {
+        require(petid != 0x0);
+        for(uint i = 0 ; i < pets.length ; i++) {
+            if(pets[i].id == petid) {
+                return (pets[i].id, pets[i].petname, pets[i].class, pets[i].birth, pets[i].value, pets[i].description, pets[i].owner);
+            }
+        }
+        return (0x0, "not found", "not found", 99999999, 0, "not found", 0x0);
+    }
+    
+    function BuyPet(uint Id) public returns (uint) {
+        //TODO
+        /*require(Id >= 0 && Id <= 87);
+        //pets[Id] = msg.sender;
+        return Id;*/
+    }
+    
+    function changeOwner(uint Id) {
+        //TODO
+        /*pets[Id].owner = buyer;*/
+    }
+  
+    function _transfer(uint _value) internal {
+        //TODO
+        /*
+        require(buyer != 0x0); 
+        require(balances[seller] >= _value); 
+        require(balances[buyer] + _value > balances[buyer]); //_value不能为负值
+
+        uint previousBalances = balances[seller] + balances[buyer]; 
+
+        balances[seller] -= _value; 
+        balances[buyer] += _value;
+
+        assert(balances[seller] + balances[buyer] == previousBalances);
+        */ 
+    }
+ }
